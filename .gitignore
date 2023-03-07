@@ -2,12 +2,13 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+migrations
 .venv
 mydb
 
 # C extensions
 *.so
+migrations
 
 # Distribution / packaging
 .Python

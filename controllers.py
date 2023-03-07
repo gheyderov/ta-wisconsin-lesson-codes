@@ -1,6 +1,7 @@
 from app import app
-from flask import render_template
-from models import Product, Color
+from flask import render_template, request
+from models import Product, Color, Contact
+from forms import ContactForm
 
 colors = ['black', 'yellow', 'purple']
 
@@ -24,6 +25,21 @@ def product(id):
 
 
 
-@app.route("/contact")
+@app.route("/contact", methods = ['GET', 'POST'])
 def contact():
-    return render_template('contact.html')
+    form = ContactForm()
+    if request.method == 'POST':
+        print(request.form)
+        print('post')
+        form = ContactForm(request.form)
+        if form.validate_on_submit():
+            print('valid')
+            contact = Contact(
+                name = form.name.data,
+                email = form.email.data,
+                company = form.company.data,
+                message = form.message.data,
+                is_subscribe = form.is_subscribe.data
+            )
+            contact.save()
+    return render_template('contact.html', form = form)

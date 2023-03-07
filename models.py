@@ -71,3 +71,26 @@ class Color(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+
+class Contact(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(100), nullable = True)
+    email = db.Column(db.String(100), nullable = True)
+    company = db.Column(db.String(100), nullable = True)
+    message = db.Column(db.String(255), nullable = True)
+    is_subscribe = db.Column(db.Boolean)
+    
+    def __init__(self, name, email, company, message, is_subscribe):
+        self.name = name
+        self.email = email
+        self.company = company
+        self.message = message
+        self.is_subscribe = is_subscribe
+
+    def __repr__(self):
+        return self.name
+    
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
