@@ -1,14 +1,22 @@
 from extensions import db
+from extensions import login_manager
+from flask_login import UserMixin
 
-class User(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(100), nullable = True)
-    last_name = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    password = db.Column(db.String(255))
     blogs = db.relationship('Blog', backref = 'user')
 
-    def __init__(self, name, last_name):
+    def __init__(self, name, email, password):
         self.name = name
-        self.last_name = last_name
+        self.email = email
+        self.password = password
 
     def __repr__(self):
         return self.name
@@ -43,15 +51,33 @@ class Product(db.Model):
     description = db.Column(db.String(255))
     price = db.Column(db.Integer)
     image = db.Column(db.String(100))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
 
-    def __init__(self, title, description, price, image):
+    def __init__(self, title, description, price, image, category_id):
         self.title = title
         self.description = description
         self.price = price
         self.image = image
+        self.category_id = category_id
 
     def __repr__(self):
         return self.title
+    
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(100), nullable = True)
+    products = db.relationship('Product', backref = 'category')
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return self.name
     
     def save(self):
         db.session.add(self)
